@@ -1,7 +1,12 @@
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddDbContext</*DbContextÝsmi*/>
+    (o => o.UseSqlServer(builder.Configuration.GetConnectionString("Baglanti")));
 
 var app = builder.Build();
 
