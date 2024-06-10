@@ -4,46 +4,158 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - MVCHamburgerApp</title>
+
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/MVCHamburgerApp.styles.css" asp-append-version="true" />
+   @* ---------------------------------------------------------------------------------------------- *@
+    <!-- bootstrap css -->
+    <link rel="stylesheet" type="text/css" href="client/css/bootstrap.min.css">
+    <!-- style css -->
+    <link rel="stylesheet" type="text/css" href="client/css/style.css">
+    <!-- Responsive-->
+    <link rel="stylesheet" href="client/css/responsive.css">
+    <!-- fevicon -->
+    <link rel="icon" href="client/images/fevicon.png" type="image/gif" />
+    <!-- font css -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    <!-- Scrollbar Custom CSS -->
+    <link rel="stylesheet" href="client/css/jquery.mCustomScrollbar.min.css">
+    <!-- Tweaks for older IEs-->
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+    
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">MVCHamburgerApp</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+    <!-- header section start -->
+    <div class="header_section">
+        <div class="container">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <a class="navbar-brand" asp-controller="Home" asp-action="Index"><img src="client/images/logo.png"></a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria- controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item active">
+                            <a class="nav-link" asp-controller="Home" asp-action="Index">Ev</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link" asp-controller="Home" asp-action="About">Hakkımızda</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="coffees.html">Coffees</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="shop.html">Shop</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="blog.html">Blog</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="contact.html">Contact</a>
                         </li>
                     </ul>
+                    <form class="form-inline my-2 my-lg-0">
+                        <div class="login_bt">
+                            <ul>
+                                <li>
+                                    <a asp-controller="User" asp-action="Register"><span class="user_icon"><i class="fa fa-user" aria-hidden="true"></i></span>Kayıt Ol</a>
+                                </li>
+
+                            </ul>
+                        </div>
+                    </form>
+                </div>
+            </nav>
+        </div>
+        <!-- banner section start -->
+        <div class="banner_section layout_padding">
+            <div class="container">
+                <div id="banner_slider" class="carousel slide" data-ride="carousel">
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="banner_taital_main">
+                                        <h1 class="banner_taital">Coffee <br>Shop</h1>
+                                        <p class="banner_text">more-or-less normal distribution of letters, as opposed to using </p>
+                                        <div class="btn_main">
+                                            <div class="about_bt active"><a href="#">About Us</a></div>
+                                            <div class="callnow_bt"><a href="#">Call Now</a></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="banner_taital_main">
+                                        <h1 class="banner_taital">Coffee <br>Shop</h1>
+                                        <p class="banner_text">more-or-less normal distribution of letters, as opposed to using </p>
+                                        <div class="btn_main">
+                                            <div class="about_bt active"><a href="#">About Us</a></div>
+                                            <div class="callnow_bt"><a href="#">Call Now</a></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="banner_taital_main">
+                                        <h1 class="banner_taital">Coffee <br>Shop</h1>
+                                        <p class="banner_text">more-or-less normal distribution of letters, as opposed to using </p>
+                                        <div class="btn_main">
+                                            <div class="about_bt active"><a href="#">About Us</a></div>
+                                            <div class="callnow_bt"><a href="#">Call Now</a></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <a class="carousel-control-prev" href="#banner_slider" role="button" data-slide="prev">
+                        <i class="fa fa-arrow-left"></i>
+                    </a>
+                    <a class="carousel-control-next" href="#banner_slider" role="button" data-slide="next">
+                        <i class="fa fa-arrow-right"></i>
+                    </a>
                 </div>
             </div>
-        </nav>
-    </header>
+        </div>
+        <!-- banner section end -->
+    </div>
+    <!-- header section end -->
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2024 - MVCHamburgerApp - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
+    
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+ 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <!-- Javascript files-->
+    <script src="client/js/jquery.min.js"></script>
+    <script src="client/js/popper.min.js"></script>
+    <script src="client/js/bootstrap.bundle.min.js"></script>
+    <script src="client/js/jquery-3.0.0.min.js"></script>
+    <script src="client/js/plugin.js"></script>
+    <!-- sidebar -->
+    <script src="client/js/jquery.mCustomScrollbar.concat.min.js"></script>
+    <script src="client/js/custom.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+
+
+
