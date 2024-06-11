@@ -1173,27 +1173,27 @@
   font-family: var(--bs-font-monospace) !important;
 }
 
-font-size1 {
+.fs-1 {
   font-size: calc(1.375rem + 1.5vw) !important;
 }
 
-font-size2 {
+.fs-2 {
   font-size: calc(1.325rem + 0.9vw) !important;
 }
 
-font-size3 {
+.fs-3 {
   font-size: calc(1.3rem + 0.6vw) !important;
 }
 
-font-size4 {
+.fs-4 {
   font-size: calc(1.275rem + 0.3vw) !important;
 }
 
-font-size5 {
+.fs-5 {
   font-size: 1.25rem !important;
 }
 
-font-size6 {
+.fs-6 {
   font-size: 1rem !important;
 }
 
@@ -4797,19 +4797,19 @@ font-size6 {
   }
 }
 @media (min-width: 1200px) {
-  font-size1 {
+  .fs-1 {
     font-size: 2.5rem !important;
   }
 
-  font-size2 {
+  .fs-2 {
     font-size: 2rem !important;
   }
 
-  font-size3 {
+  .fs-3 {
     font-size: 1.75rem !important;
   }
 
-  font-size4 {
+  .fs-4 {
     font-size: 1.5rem !important;
   }
 }
