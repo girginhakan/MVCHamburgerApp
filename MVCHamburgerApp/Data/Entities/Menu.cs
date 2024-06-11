@@ -25,6 +25,6 @@ namespace MVCHamburgerApp.Data.Entities
         [Required]
         public string Size { get; set; } //(enum mı olacak acaba müşteriye selectbox'tan seçtirmek için)
 
-        public ICollection<OrderDetail> OrderDetails { get; set; }
+        public ICollection<OrderDetail>? OrderDetails { get; set; }
     }
 }
