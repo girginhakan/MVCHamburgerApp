@@ -47,27 +47,58 @@ namespace MVCHamburgerApp.Areas.Admin.Controllers
             return View(menu);
         }
 
-        // GET: Admin/Menu/Create
         public IActionResult Create()
         {
             return View();
         }
 
         // POST: Admin/Menu/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description,BasePrice,PictureName,PictureFile,Size")] Menu menu)
+        public async Task<IActionResult> Create(Menu menu)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(menu);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    // Dosyayı kaydetme işlemi
+                    if (menu.PictureFile != null)
+                    {
+                        var fileName = Path.GetFileName(menu.PictureFile.FileName);
+                        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", fileName);
+
+                        using (var fileStream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await menu.PictureFile.CopyToAsync(fileStream);
+                        }
+
+                        menu.PictureName = fileName; // Kaydedilen dosya adını PictureName'e atamak için
+                    }
+
+                    _context.Add(menu);
+                    await _context.SaveChangesAsync();
+                    ViewData["SuccessMessage"] = "Başarıyla eklenmiştir.";
+                    return View();
+                }
+                catch (Exception ex)
+                {
+                    // Hata durumunda hata mesajını ayarlayın
+                    ViewData["ErrorMessage"] = "Hata oluştu: " + ex.Message;
+                    return View(menu);
+                }
             }
+            else
+            {
+                // ModelState hatalarını yakalayın ve hata mesajlarını ayarlayın
+                var errors = ModelState.Values.SelectMany(v => v.Errors);
+                string errorMessages = string.Join("; ", errors.Select(e => e.ErrorMessage));
+                ViewData["ErrorMessage"] = "Gecersiz veri girisi: " + errorMessages;
+            }
+
             return View(menu);
         }
+
+
 
         // GET: Admin/Menu/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -121,24 +152,22 @@ namespace MVCHamburgerApp.Areas.Admin.Controllers
         }
 
         // GET: Admin/Menu/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public IActionResult Delete(int? id)
         {
             if (id == null)
             {
-                return NotFound();
+                return NotFound("Menu ID is required to perform delete operation.");
             }
 
-            var menu = await _context.Menus
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var menu = _context.Menus.FirstOrDefault(m => m.Id == id);
             if (menu == null)
             {
-                return NotFound();
+                return NotFound("Menu not found.");
             }
 
             return View(menu);
         }
 
-        // POST: Admin/Menu/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -147,11 +176,11 @@ namespace MVCHamburgerApp.Areas.Admin.Controllers
             if (menu != null)
             {
                 _context.Menus.Remove(menu);
+                await _context.SaveChangesAsync();
             }
-
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+
 
         private bool MenuExists(int id)
         {

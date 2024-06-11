@@ -1,14 +1,29 @@
-﻿namespace MVCHamburgerApp.Data.Entities
+﻿using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace MVCHamburgerApp.Data.Entities
 {
     public class Menu
     {
         public int Id { get; set; }
+
+        [Required]
         public string Name { get; set; }
+
         public string Description { get; set; }
+
+        [Required]
+        [Range(0, 1000)]
         public decimal BasePrice { get; set; }
+
         public string PictureName { get; set; }
-        public byte[] PictureFile { get; set; }
-        public string Size { get; set; }
+
+        [NotMapped]
+        public IFormFile PictureFile { get; set; }
+
+        [Required]
+        public string Size { get; set; } //(enum mı olacak acaba müşteriye selectbox'tan seçtirmek için)
 
         public ICollection<OrderDetail> OrderDetails { get; set; }
     }
