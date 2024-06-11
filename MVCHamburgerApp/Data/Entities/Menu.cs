@@ -22,7 +22,6 @@ namespace MVCHamburgerApp.Data.Entities
         public string PictureName { get; set; }
 
         [NotMapped]
-        [BindNever]
         public IFormFile PictureFile { get; set; }
 
         [Required]
