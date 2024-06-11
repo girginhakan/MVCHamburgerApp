@@ -4,7 +4,8 @@
     <div class="container">
         <div class="row">
             <div class="col-sm-12">
-                <h1 class="contact_taital">Kayıt Ekranı</h1>
+                <br />
+                <h1 class="contact_taital">Kayıt Ekranı</h1><br />
             </div>
         </div>
     </div>
@@ -15,15 +16,15 @@
                     <div class="col-md-12">
 
                         <div class="mail_section_1">
-                            <input asp-for="Name" type="text" class="mail_text" placeholder="Adınız" name="Your Name">
-                            <input asp-for="Surname" type="text" class="mail_text" placeholder="Soyadınız" name="Your SurName">
-                            <input asp-for="Email" type="text" class="mail_text" placeholder="E-posta" name="Your Email">
-                            <input asp-for="Password" type="text" class="mail_text" placeholder="Şifreniz" name="Your Password">
-                            <input asp-for="ConfirmPassword" type="text" class="mail_text" placeholder="Şifre tekrarı" name="Your ConfirmPassword">
-
+                            <input asp-for="Name" type="text" class="form-control" placeholder="Adınız" ><br />
+                            <input asp-for="Surname" type="text" class="form-control" placeholder="Soyadınız"><br />
+                            <input asp-for="Email" type="text" class="form-control" placeholder="E-posta"><br />
+                            <input asp-for="Password" type="text" class="form-control" placeholder="Şifreniz"><br />
+                            <input asp-for="ConfirmPassword" type="text" class="form-control" placeholder="Şifre tekrarı">
+                            <br />
                             <div class="send_bt">
-                                <button type="submit">Ekle</button>
-                                <a asp-controller="Home" asp-action="Index" type="submit" class="btn btn-warning">Geri</a>
+                                <button type="submit" class="btn btn-outline-success">Ekle</button>
+                                <a asp-controller="Home" asp-action="Index" type="submit" class="btn btn-outline-warning">Geri</a>
                             </div>
                         </div>
 

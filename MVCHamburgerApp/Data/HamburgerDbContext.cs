@@ -52,8 +52,8 @@ namespace MVCHamburgerApp.Data
                 .HasData(new IdentityRole<int>
                 {
                     Id= 2,
-                    Name="Musteri",
-                    NormalizedName="MUSTERI"
+                    Name="Customer",
+                    NormalizedName="CUSTOMER"
                 });
 
             builder.Entity<IdentityUserRole<int>>()
