@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using MVCHamburgerApp.Data.Enums;
 
 namespace MVCHamburgerApp.Areas.Admin.Models
 {
@@ -8,6 +9,6 @@ namespace MVCHamburgerApp.Areas.Admin.Models
         public string Description { get; set; }
         public decimal BasePrice { get; set; }
         public IFormFile? Picture { get; set; }
-        public string Size { get; set; }
+        public MenuSize Size { get; set; }
     }
 }

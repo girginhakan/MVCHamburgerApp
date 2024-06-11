@@ -102,17 +102,17 @@ namespace MVCHamburgerApp.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "f1459d55-8b18-4684-967a-c0ffdccbe47c",
+                            ConcurrencyStamp = "6cacd55e-5e90-4a34-82f3-e1dfa2ebc5d2",
                             Email = "admin@mail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             Name = "adminName",
                             NormalizedEmail = "ADMIN@MAIL.COM",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEBdZdGkwsRn95kHvQ5AiIvC1rTWiNcRYrBxHgIL0Pq2ZO0en9tI0SlL0o665s8EIqg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEGHJr76+1khSzOx8MwygrUGhfmlgepMLWaxNkib4MtARPDJMvSSIWOi0odBbO0it5g==",
                             PhoneNumber = "-",
                             PhoneNumberConfirmed = true,
-                            SecurityStamp = "5f7dd8fa-3bcf-43f3-891a-2bfa971d8c38",
+                            SecurityStamp = "5341b8e3-88ff-4552-993a-28888e38d627",
                             Surname = "adminSurname",
                             TwoFactorEnabled = false,
                             UserName = "admin"
@@ -158,17 +158,11 @@ namespace MVCHamburgerApp.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<byte[]>("PictureFile")
-                        .IsRequired()
-                        .HasColumnType("varbinary(max)");
-
                     b.Property<string>("PictureName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Size")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Size")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 

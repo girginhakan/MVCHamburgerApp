@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using MVCHamburgerApp.Data.Enums;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -12,10 +13,10 @@ namespace MVCHamburgerApp.Data.Entities
         public decimal BasePrice { get; set; }
         public string? PictureName { get; set; } = "default.jpg";
 
-        [NotMapped]
-        public IFormFile? PictureFile { get; set; }
+        //[NotMapped]
+        //public IFormFile? PictureFile { get; set; }
 
-        public string Size { get; set; }
+        public MenuSize Size { get; set; }
         public ICollection<OrderDetail>? OrderDetails { get; set; }
     }
 }

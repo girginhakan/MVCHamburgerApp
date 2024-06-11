@@ -53,7 +53,7 @@ namespace MVCHamburgerApp.Areas.Admin.Controllers
         // POST: Admin/Menu/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(MenuViewModel menuViewModel)
+        public IActionResult Create(MenuViewModel menuViewModel)
         {
             if (menuViewModel.BasePrice < 0)
             {
@@ -81,41 +81,35 @@ namespace MVCHamburgerApp.Areas.Admin.Controllers
                 using (var akisOrtami = new FileStream(konum, FileMode.Create))
                 {
                     // Resmi kaydet
-                    await menuViewModel.Picture.CopyToAsync(akisOrtami);
+                     menuViewModel.Picture.CopyToAsync(akisOrtami);
                 }
             }
 
             _context.Menus.Add(menu);
-            await _context.SaveChangesAsync();
+             _context.SaveChanges();
             return RedirectToAction("Index");
         }
 
         // GET: Admin/Menu/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public IActionResult Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            var guncellenecekUrun = _context.Menus.Find(id);
+            MenuViewModel model = new MenuViewModel();
+            model.Name = guncellenecekUrun.Name;
+            model.Description = guncellenecekUrun.Description;
+            model.BasePrice = guncellenecekUrun.BasePrice;
+            ViewBag.ResimAdi = guncellenecekUrun.PictureName;
+            TempData["Id"] = id;
 
-            var menu = await _context.Menus.FindAsync(id);
-            if (menu == null)
-            {
-                return NotFound();
-            }
-
-            return View(menu);
+            return View(model);
         }
 
         // POST: Admin/Menu/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,BasePrice,PictureName,PictureFile,Size")] Menu menu)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,BasePrice,PictureName,PictureFile,Size")] MenuViewModel model)
         {
-            if (id != menu.Id)
-            {
-                return NotFound();
-            }
+
 
             if (ModelState.IsValid)
             {
@@ -125,49 +119,48 @@ namespace MVCHamburgerApp.Areas.Admin.Controllers
                 {
                     return NotFound();
                 }
+                guncellenenMenu.Name = model.Name;
+                guncellenenMenu.Description = model.Description;
+                guncellenenMenu.BasePrice = model.BasePrice;
+                guncellenenMenu.Size = model.Size;
 
-                if (menu.PictureFile != null && menu.PictureFile.Length > 0)
+                if (model.Picture != null && model.Picture.FileName != guncellenenMenu.PictureName)
                 {
-                    var fileName = Path.GetFileName(menu.PictureFile.FileName);
+                    var fileName = Path.GetFileName(model.Picture.FileName);
                     var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", fileName);
-
+                    if (guncellenenMenu.PictureName is not null)
+                    {
+                        DeletePicture(guncellenenMenu);
+                    }
+                    guncellenenMenu.PictureName = fileName;
                     using (var fileStream = new FileStream(filePath, FileMode.Create))
                     {
-                        await menu.PictureFile.CopyToAsync(fileStream);
+                        await model.Picture.CopyToAsync(fileStream);
                     }
 
-                    guncellenenMenu.PictureName = fileName;
                 }
+                _context.Update(guncellenenMenu);
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Başarılı bir şekilde güncellenmiştir.";
+                return RedirectToAction(nameof(Index));
 
-                guncellenenMenu.Name = menu.Name;
-                guncellenenMenu.Description = menu.Description;
-                guncellenenMenu.BasePrice = menu.BasePrice;
-                guncellenenMenu.Size = menu.Size;
 
-                try
-                {
-                    _context.Update(guncellenenMenu);
-                    await _context.SaveChangesAsync();
-                    TempData["SuccessMessage"] = "Başarılı bir şekilde güncellenmiştir.";
-                    return RedirectToAction(nameof(Index));
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!MenuExists(menu.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
             }
 
             // Hata durumunda hata mesajını ModelState hatasıyla beraber göster
             var errorMessages = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
             TempData["ErrorMessage"] = "Hata oluştu. " + string.Join(" ", errorMessages);
-            return View(menu);
+            return View(model);
+        }
+
+
+        public void DeletePicture(Menu menu)
+        {
+            var resmiKullananBaskaUrunVarMi = _context.Menus.Any(u => u.PictureName == menu.PictureName && u.Id != menu.Id);
+
+                string deletedPicture = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", menu.PictureName);
+                System.IO.File.Delete(deletedPicture);
+
         }
 
         // GET: Admin/Menu/Delete/5
@@ -189,14 +182,15 @@ namespace MVCHamburgerApp.Areas.Admin.Controllers
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(Menu menu)
         {
-            var menu = await _context.Menus.FindAsync(id);
-            if (menu != null)
+            //var menu = await _context.Menus.FindAsync(id);
+            if (menu.PictureName is not null)
             {
+                DeletePicture(menu);
+            }
                 _context.Menus.Remove(menu);
                 await _context.SaveChangesAsync();
-            }
             return RedirectToAction(nameof(Index));
         }
 
