@@ -11,7 +11,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="Edit" id="editForm">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
@@ -31,12 +31,13 @@
             </div>
             <div class="form-group">
                 <label asp-for="PictureName" class="control-label"></label>
-                <input asp-for="PictureName" class="form-control" />
+                <input asp-for="PictureName" class="form-control" readonly="readonly" />
                 <span asp-validation-for="PictureName" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="PictureFile" class="control-label"></label>
-                <input asp-for="PictureFile" class="form-control" />
+                <input asp-for="PictureFile" class="form-control" type="file" />
                 <span asp-validation-for="PictureFile" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -56,5 +57,19 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        document.getElementById('editForm').addEventListener('submit', function (event) {
+            var pictureFile = document.getElementById('PictureFile').value;
+            if (!pictureFile) {
+                // Resim dosyası seçilmediğinde hata mesajı göster
+                var errorSpan = document.querySelector('span[data-valmsg-for="PictureFile"]');
+                errorSpan.textContent = 'Lütfen bir resim dosyası seçin veya mevcut resmi kullanın.';
+                event.preventDefault();
+            }
+        });
+    </script>
 }
+
