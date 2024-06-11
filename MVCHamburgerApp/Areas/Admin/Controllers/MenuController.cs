@@ -77,13 +77,13 @@ namespace MVCHamburgerApp.Areas.Admin.Controllers
 
                     _context.Add(menu);
                     await _context.SaveChangesAsync();
-                    ViewData["SuccessMessage"] = "Başarıyla eklenmiştir.";
+                    ViewData["SuccessMessage"] = "Basariyla eklenmistir.";
                     return View();
                 }
                 catch (Exception ex)
                 {
                     // Hata durumunda hata mesajını ayarlayın
-                    ViewData["ErrorMessage"] = "Hata oluştu: " + ex.Message;
+                    ViewData["ErrorMessage"] = "Hata olustu: " + ex.Message;
                     return View(menu);
                 }
             }
@@ -113,6 +113,14 @@ namespace MVCHamburgerApp.Areas.Admin.Controllers
             {
                 return NotFound();
             }
+
+            // PictureFile alanını set etmeden önce PictureName'i kontrol et
+            if (!string.IsNullOrEmpty(menu.PictureName))
+            {
+                var fileName = Path.Combine("/images", menu.PictureName); // resim dosyasının yolunu al
+                menu.PictureFile = new FormFile(null, 0, 0, null, fileName); // PictureFile'ı set et
+            }
+
             return View(menu);
         }
 
@@ -130,10 +138,37 @@ namespace MVCHamburgerApp.Areas.Admin.Controllers
 
             if (ModelState.IsValid)
             {
+                var existingMenu = await _context.Menus.FindAsync(id);
+
+                if (existingMenu == null)
+                {
+                    return NotFound();
+                }
+
+                if (menu.PictureFile != null && menu.PictureFile.Length > 0)
+                {
+                    var fileName = Path.GetFileName(menu.PictureFile.FileName);
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", fileName);
+
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await menu.PictureFile.CopyToAsync(fileStream);
+                    }
+
+                    existingMenu.PictureName = fileName;
+                }
+
+                existingMenu.Name = menu.Name;
+                existingMenu.Description = menu.Description;
+                existingMenu.BasePrice = menu.BasePrice;
+                existingMenu.Size = menu.Size;
+
                 try
                 {
-                    _context.Update(menu);
+                    _context.Update(existingMenu);
                     await _context.SaveChangesAsync();
+                    TempData["SuccessMessage"] = "Başarılı bir şekilde güncellenmiştir.";
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -146,10 +181,15 @@ namespace MVCHamburgerApp.Areas.Admin.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
             }
+
+            // Hata durumunda ModelState hatasını görüntüle
+            var errorMessages = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+            TempData["ErrorMessage"] = "Hata oluştu. " + string.Join(" ", errorMessages);
             return View(menu);
         }
+
+
 
         // GET: Admin/Menu/Delete/5
         public IActionResult Delete(int? id)

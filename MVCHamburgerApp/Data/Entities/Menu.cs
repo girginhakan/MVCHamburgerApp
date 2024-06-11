@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -20,6 +22,7 @@ namespace MVCHamburgerApp.Data.Entities
         public string PictureName { get; set; }
 
         [NotMapped]
+        [BindNever]
         public IFormFile PictureFile { get; set; }
 
         [Required]
