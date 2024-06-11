@@ -233,7 +233,7 @@ button {
     background-color: transparent !important;
 }
 
-.mr-auto,
+.me-auto,
 .mx-auto {
     margin: 0 auto;
     text-align: center;
@@ -1011,7 +1011,7 @@ textarea#comment.update_mail::placeholder {
     color: #383838;
 }
 
-.form-group {
+.form-inline {
     margin-bottom: 1rem;
     display: flex;
     width: 50%;

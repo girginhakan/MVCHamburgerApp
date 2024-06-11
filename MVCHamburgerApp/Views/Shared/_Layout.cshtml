@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/MVCHamburgerApp.styles.css" asp-append-version="true" />
-   @* ---------------------------------------------------------------------------------------------- *@
+    @* ---------------------------------------------------------------------------------------------- *@
     <!-- bootstrap css -->
     <link rel="stylesheet" type="text/css" href="client/css/bootstrap.min.css">
     <!-- style css -->
@@ -23,128 +23,77 @@
     <link rel="stylesheet" href="client/css/jquery.mCustomScrollbar.min.css">
     <!-- Tweaks for older IEs-->
     <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
-    
+
 </head>
 <body>
     <!-- header section start -->
     <div class="header_section">
         <div class="container">
-            <nav class="navbar navbar-expand-lg navbar-light bg-light">
-                <a class="navbar-brand" asp-controller="Home" asp-action="Index"><img src="client/images/logo.png"></a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria- controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav ml-auto">
-                        <li class="nav-item active">
-                            <a class="nav-link" asp-controller="Home" asp-action="Index">Ev</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Home" asp-action="About">Hakkımızda</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="coffees.html">Coffees</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="shop.html">Shop</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="blog.html">Blog</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="contact.html">Contact</a>
-                        </li>
-                    </ul>
-                    <form class="form-inline my-2 my-lg-0">
-                        <div class="login_bt">
-                            <ul>
-                                <li>
-                                    <a asp-controller="User" asp-action="Register"><span class="user_icon"><i class="fa fa-user" aria-hidden="true"></i></span>Kayıt Ol</a>
-                                </li>
-
-                            </ul>
-                        </div>
-                    </form>
-                </div>
-            </nav>
+            @await Html.PartialAsync("_Navbar")
         </div>
-        <!-- banner section start -->
-        <div class="banner_section layout_padding">
-            <div class="container">
-                <div id="banner_slider" class="carousel slide" data-ride="carousel">
-                    <div class="carousel-inner">
-                        <div class="carousel-item active">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="banner_taital_main">
-                                        <h1 class="banner_taital">Coffee <br>Shop</h1>
-                                        <p class="banner_text">more-or-less normal distribution of letters, as opposed to using </p>
-                                        <div class="btn_main">
-                                            <div class="about_bt active"><a href="#">About Us</a></div>
-                                            <div class="callnow_bt"><a href="#">Call Now</a></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="carousel-item">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="banner_taital_main">
-                                        <h1 class="banner_taital">Coffee <br>Shop</h1>
-                                        <p class="banner_text">more-or-less normal distribution of letters, as opposed to using </p>
-                                        <div class="btn_main">
-                                            <div class="about_bt active"><a href="#">About Us</a></div>
-                                            <div class="callnow_bt"><a href="#">Call Now</a></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="carousel-item">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="banner_taital_main">
-                                        <h1 class="banner_taital">Coffee <br>Shop</h1>
-                                        <p class="banner_text">more-or-less normal distribution of letters, as opposed to using </p>
-                                        <div class="btn_main">
-                                            <div class="about_bt active"><a href="#">About Us</a></div>
-                                            <div class="callnow_bt"><a href="#">Call Now</a></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+        @RenderSection("_BannerSection", required: false)
+    </div>
+    <!-- header section end -->
+    <div class="container">
+
+            @RenderBody()
+    </div>
+    <!-- footer section start -->
+    <div class="footer_section layout_padding">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="footer_social_icon">
+                        <ul>
+                            <li><a href="#"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
+                            <li><a href="#"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
+                            <li><a href="#"><i class="fa fa-linkedin" aria-hidden="true"></i></a></li>
+                            <li><a href="#"><i class="fa fa-instagram" aria-hidden="true"></i></a></li>
+                        </ul>
                     </div>
-                    <a class="carousel-control-prev" href="#banner_slider" role="button" data-slide="prev">
-                        <i class="fa fa-arrow-left"></i>
-                    </a>
-                    <a class="carousel-control-next" href="#banner_slider" role="button" data-slide="next">
-                        <i class="fa fa-arrow-right"></i>
-                    </a>
+                    <div class="location_text">
+                        <ul>
+                            <li>
+                                <a href="#">
+                                    <i class="fa fa-phone" aria-hidden="true"></i><span class="padding_left_10">+01 1234567890</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <i class="fa fa-envelope" aria-hidden="true"></i><span class="padding_left_10">mvcproject@gmail.com</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
                 </div>
             </div>
         </div>
-        <!-- banner section end -->
-    </div>
-    <!-- header section end -->
-
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
     </div>
 
-    
+    <!-- footer section end -->
+    <!-- copyright section start -->
+    <div class="copyright_section">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12">
+                    <p class="copyright_text">
+                        2024 Her hakkı saklıdır.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
- 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+    @* <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script> *@
+
+      <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
 
-    <!-- Javascript files-->
+  @*   <!-- Javascript files-->
     <script src="client/js/jquery.min.js"></script>
     <script src="client/js/popper.min.js"></script>
     <script src="client/js/bootstrap.bundle.min.js"></script>
@@ -152,7 +101,7 @@
     <script src="client/js/plugin.js"></script>
     <!-- sidebar -->
     <script src="client/js/jquery.mCustomScrollbar.concat.min.js"></script>
-    <script src="client/js/custom.js"></script>
+    <script src="client/js/custom.js"></script> *@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

@@ -34,7 +34,7 @@
 
   // Sidebar position
   &[data-sidebar-position="fixed"] {
-    .left-sidebar {
+    .start-sidebar {
       position: fixed;
       top: 0;
     }
@@ -90,12 +90,12 @@
 
     &[data-sidebartype="mini-sidebar"],
     &[data-sidebartype="full"] {
-      .left-sidebar {
+      .start-sidebar {
         left: -$sidebar-width-full;
       }
 
       &.show-sidebar {
-        .left-sidebar {
+        .start-sidebar {
           left: 0;
         }
       }
