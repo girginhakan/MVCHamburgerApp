@@ -1,4 +1,5 @@
-﻿@model MVCHamburgerApp.Data.Entities.Menu
+﻿@using MVCHamburgerApp.Data.Enums
+@model MenuViewModel
 
 @{
     ViewData["Title"] = "Edit";
@@ -13,7 +14,7 @@
     <div class="col-md-4">
         <form asp-action="Edit" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
+            @* <input type="hidden" asp-for="Id" /> *@
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" />
@@ -30,13 +31,14 @@
                 <span asp-validation-for="BasePrice" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="PictureFile" class="control-label"></label>
-                <input asp-for="PictureFile" type="file" class="form-control" />
-                <span asp-validation-for="PictureFile" class="text-danger"></span>
+                <label asp-for="Picture" class="control-label"></label>
+                <input asp-for="Picture" type="file" class="form-control" />
+                <span asp-validation-for="Picture" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Size" class="control-label"></label>
-                <input asp-for="Size" class="form-control" />
+                <select asp-for="Size" asp-items="@Html.GetEnumSelectList<MenuSize>()" class="input">
+                </select>
                 <span asp-validation-for="Size" class="text-danger"></span>
             </div>
             <div class="form-group">

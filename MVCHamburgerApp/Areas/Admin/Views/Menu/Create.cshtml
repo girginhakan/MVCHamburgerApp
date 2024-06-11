@@ -1,4 +1,5 @@
-﻿@model MVCHamburgerApp.Areas.Admin.Models.MenuViewModel
+﻿@using MVCHamburgerApp.Data.Enums
+@model MVCHamburgerApp.Areas.Admin.Models.MenuViewModel
 
 @{
     ViewData["Title"] = "Create";
@@ -35,7 +36,8 @@
             </div>
             <div class="form-group">
                 <label asp-for="Size" class="control-label"></label>
-                <input asp-for="Size" class="form-control" />
+                <select asp-for="Size" asp-items="@Html.GetEnumSelectList<MenuSize>()" class="input">
+                </select>
                 <span asp-validation-for="Size" class="text-danger"></span>
             </div>
             <div class="form-group">

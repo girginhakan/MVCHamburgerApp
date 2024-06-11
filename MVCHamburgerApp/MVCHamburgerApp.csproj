@@ -25,9 +25,4 @@
     <Folder Include="Areas\Admin\Data\" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Include="wwwroot\client\css\.DS_Store" />
-    <None Include="wwwroot\client\js\.DS_Store" />
-  </ItemGroup>
-
 </Project>
