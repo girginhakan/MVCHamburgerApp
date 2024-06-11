@@ -1,19 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using MVCHamburgerApp.Areas.Admin.Models;
 using MVCHamburgerApp.Data;
 using MVCHamburgerApp.Data.Entities;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace MVCHamburgerApp.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Authorize(Roles = "Admin")]
-
     public class MenuController : Controller
     {
         private readonly HamburgerDbContext _context;
@@ -55,50 +53,42 @@ namespace MVCHamburgerApp.Areas.Admin.Controllers
         // POST: Admin/Menu/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Menu menu)
+        public async Task<IActionResult> Create(MenuViewModel menuViewModel)
         {
-            if (ModelState.IsValid)
+            if (menuViewModel.BasePrice < 0)
             {
-                try
-                {
-                    // Dosyayı kaydetme işlemi
-                    if (menu.PictureFile != null)
-                    {
-                        var fileName = Path.GetFileName(menu.PictureFile.FileName);
-                        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", fileName);
-
-                        using (var fileStream = new FileStream(filePath, FileMode.Create))
-                        {
-                            await menu.PictureFile.CopyToAsync(fileStream);
-                        }
-
-                        menu.PictureName = fileName; // Kaydedilen dosya adını PictureName'e atamak için
-                    }
-
-                    _context.Add(menu);
-                    await _context.SaveChangesAsync();
-                    ViewData["SuccessMessage"] = "Basariyla eklenmistir.";
-                    return View();
-                }
-                catch (Exception ex)
-                {
-                    // Hata durumunda hata mesajını ayarlayın
-                    ViewData["ErrorMessage"] = "Hata olustu: " + ex.Message;
-                    return View(menu);
-                }
-            }
-            else
-            {
-                // ModelState hatalarını yakalayın ve hata mesajlarını ayarlayın
-                var errors = ModelState.Values.SelectMany(v => v.Errors);
-                string errorMessages = string.Join("; ", errors.Select(e => e.ErrorMessage));
-                ViewData["ErrorMessage"] = "Gecersiz veri girisi: " + errorMessages;
+                TempData["Hata"] = "Fiyat negatif olamaz";
+                return View(menuViewModel);
             }
 
-            return View(menu);
+            Menu menu = new Menu
+            {
+                Name = menuViewModel.Name,
+                BasePrice = menuViewModel.BasePrice,
+                Description = menuViewModel.Description,
+                Size = menuViewModel.Size
+            };
+
+            if (menuViewModel.Picture != null)
+            {
+                // Dosyanın adını, urun nesnesinin resim adına ata
+                menu.PictureName = menuViewModel.Picture.FileName;
+
+                // Dosyanın kaydedileceği konumu belirle
+                var konum = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", menu.PictureName);
+
+                // Kaydetmek için bir akış ortamı oluştur
+                using (var akisOrtami = new FileStream(konum, FileMode.Create))
+                {
+                    // Resmi kaydet
+                    await menuViewModel.Picture.CopyToAsync(akisOrtami);
+                }
+            }
+
+            _context.Menus.Add(menu);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index");
         }
-
-
 
         // GET: Admin/Menu/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -114,19 +104,10 @@ namespace MVCHamburgerApp.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            // PictureFile alanını set etmeden önce PictureName'i kontrol et
-            if (!string.IsNullOrEmpty(menu.PictureName))
-            {
-                var fileName = Path.Combine("/images", menu.PictureName); // resim dosyasının yolunu al
-                menu.PictureFile = new FormFile(null, 0, 0, null, fileName); // PictureFile'ı set et
-            }
-
             return View(menu);
         }
 
         // POST: Admin/Menu/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,BasePrice,PictureName,PictureFile,Size")] Menu menu)
@@ -138,9 +119,9 @@ namespace MVCHamburgerApp.Areas.Admin.Controllers
 
             if (ModelState.IsValid)
             {
-                var existingMenu = await _context.Menus.FindAsync(id);
+                var guncellenenMenu = await _context.Menus.FindAsync(id);
 
-                if (existingMenu == null)
+                if (guncellenenMenu == null)
                 {
                     return NotFound();
                 }
@@ -155,17 +136,17 @@ namespace MVCHamburgerApp.Areas.Admin.Controllers
                         await menu.PictureFile.CopyToAsync(fileStream);
                     }
 
-                    existingMenu.PictureName = fileName;
+                    guncellenenMenu.PictureName = fileName;
                 }
 
-                existingMenu.Name = menu.Name;
-                existingMenu.Description = menu.Description;
-                existingMenu.BasePrice = menu.BasePrice;
-                existingMenu.Size = menu.Size;
+                guncellenenMenu.Name = menu.Name;
+                guncellenenMenu.Description = menu.Description;
+                guncellenenMenu.BasePrice = menu.BasePrice;
+                guncellenenMenu.Size = menu.Size;
 
                 try
                 {
-                    _context.Update(existingMenu);
+                    _context.Update(guncellenenMenu);
                     await _context.SaveChangesAsync();
                     TempData["SuccessMessage"] = "Başarılı bir şekilde güncellenmiştir.";
                     return RedirectToAction(nameof(Index));
@@ -183,13 +164,11 @@ namespace MVCHamburgerApp.Areas.Admin.Controllers
                 }
             }
 
-            // Hata durumunda ModelState hatasını görüntüle
+            // Hata durumunda hata mesajını ModelState hatasıyla beraber göster
             var errorMessages = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
             TempData["ErrorMessage"] = "Hata oluştu. " + string.Join(" ", errorMessages);
             return View(menu);
         }
-
-
 
         // GET: Admin/Menu/Delete/5
         public IActionResult Delete(int? id)
@@ -220,7 +199,6 @@ namespace MVCHamburgerApp.Areas.Admin.Controllers
             }
             return RedirectToAction(nameof(Index));
         }
-
 
         private bool MenuExists(int id)
         {
