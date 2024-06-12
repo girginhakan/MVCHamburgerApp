@@ -13,37 +13,45 @@
 
 <div class="container">
     <h1>Menüler</h1>
-    <form asp-action="SiparisVer" method="post">
+    <form asp-action="SiparisVer" method="post" id="orderForm">
         <div class="row">
-            @foreach (var menu in Model.Menus)
+            @for (int i = 0; i < Model.Menus.Count; i++)
             {
+                var menu = Model.Menus[i];
                 <div class="col-md-4">
                     <div class="card mb-4">
-                        <img class="card-img-top" src="~/images/@menu.PictureName" alt="@menu.Name">
+                        <div class="card-img-container">
+                            <img class="card-img-top" src="~/images/@menu.PictureName" alt="@menu.Name">
+                        </div>
                         <div class="card-body">
                             <h5 class="card-title">@menu.Name</h5>
                             <p class="card-text">@menu.Description</p>
+                        </div>
+                        <div class="card-footer">
+                            <input type="hidden" name="OrderItems.Index" value="@i" />
+                            <input type="hidden" name="OrderItems[@i].MenuId" value="@menu.Id" />
+                            <input type="hidden" name="OrderItems[@i].MenuName" value="@menu.Name" />
+                            <input type="hidden" id="BasePrice_@menu.Id" value="@menu.BasePrice" />
 
                             <p class="card-text">
                                 Fiyat: <span id="PriceDisplay_@menu.Id">@menu.BasePrice</span> TL
                             </p>
-
                             <label for="Size_@menu.Id">Boyut:</label>
-                            <select id="Size_@menu.Id" name="Size_@menu.Id" class="form-control" onchange="updatePrice(@menu.Id, @menu.BasePrice)">
+                            <select id="Size_@menu.Id" name="OrderItems[@i].Size" class="form-control" onchange="updatePriceAndTotal(this)">
                                 <option value="Küçük" data-price="0">Küçük</option>
                                 <option value="Orta" data-price="25">Orta</option>
                                 <option value="Büyük" data-price="50">Büyük</option>
                             </select>
-
                             <label for="Quantity_@menu.Id">Adet:</label>
-                            <input type="number" id="Quantity_@menu.Id" name="Quantity_@menu.Id" class="form-control" min="1" value="1" onchange="updatePrice(@menu.Id, @menu.BasePrice)">
+                            <input type="number" id="Quantity_@menu.Id" name="OrderItems[@i].Quantity" class="form-control" min="0" value="0" onchange="updatePriceAndTotal(this)">
+
 
                             <div>
                                 <label>Ekstra Malzemeler:</label>
                                 @foreach (var topping in Model.ExtraToppings)
                                 {
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="Toppings_@menu.Id" value="@topping.Id" onchange="updatePrice(@menu.Id, @menu.BasePrice)">
+                                        <input class="form-check-input toppingCheckbox" type="checkbox" name="OrderItems[@i].SelectedToppingIds" value="@topping.Id" data-price="@topping.Price" onchange="updatePriceAndTotal(this)">
                                         <label class="form-check-label">@topping.Name (@topping.Price TL)</label>
                                     </div>
                                 }
@@ -53,30 +61,103 @@
                 </div>
             }
         </div>
+
+        <p>Toplam Sipariş Tutarı: <span id="grandTotal">0</span> TL</p>
         <button type="submit" class="btn btn-primary">Sipariş Ver</button>
     </form>
 </div>
 
-<script>
-    function updatePrice(menuId, basePrice) {
-        var sizeSelect = document.getElementById("Size_" + menuId);
-        var quantityInput = document.getElementById("Quantity_" + menuId);
-        var priceDisplay = document.getElementById("PriceDisplay_" + menuId);
 
-        var sizePrice = parseInt(sizeSelect.options[sizeSelect.selectedIndex].getAttribute("data-price"));
-        var quantity = parseInt(quantityInput.value);
+
+<script>
+    function updatePriceAndTotal(element) {
+        var index = element.name.match(/\[(\d+)\]/)[1];
+
+        var sizeSelect = document.getElementById("Size_" + index);
+        var quantityInput = document.getElementById("Quantity_" + index);
+        var priceDisplay = document.getElementById("PriceDisplay_" + index);
+        var basePriceInput = document.getElementById("BasePrice_" + index);
+
+        var sizePrice = parseInt(sizeSelect.options[sizeSelect.selectedIndex].getAttribute("data-price")) || 0;
+        var quantity = parseInt(quantityInput.value) || 0;
+        var basePrice = parseInt(basePriceInput.value) || 0;
 
         var toppingPrice = 0;
-        var toppingCheckboxes = document.querySelectorAll('input[name="Toppings_' + menuId + '"]:checked');
+        var toppingCheckboxes = document.querySelectorAll(`input[name="OrderItems[${index}].SelectedToppingIds"]:checked`);
         toppingCheckboxes.forEach(function (checkbox) {
-            toppingPrice += parseInt(checkbox.nextElementSibling.innerText.match(/\d+/)[0]);
+            toppingPrice += parseInt(checkbox.getAttribute("data-price"));
         });
 
         var totalPrice = (basePrice + sizePrice + toppingPrice) * quantity;
         priceDisplay.innerText = totalPrice;
+
+        var itemPriceInput = document.querySelector(`input[name="OrderItems[${index}].ItemPrice"]`);
+        if (itemPriceInput) {
+            itemPriceInput.value = totalPrice;
+        }
+
+        calculateGrandTotal();
     }
+
+    function calculateGrandTotal() {
+        var total = 0;
+        var itemPriceInputs = document.querySelectorAll('input[name$=".ItemPrice"]');
+        itemPriceInputs.forEach(function (input) {
+            total += parseInt(input.value) || 0;
+        });
+        document.getElementById('grandTotal').innerText = total;
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var sizeSelects = document.querySelectorAll('select[id^="Size_"]');
+        var quantityInputs = document.querySelectorAll('input[id^="Quantity_"]');
+        var toppingCheckboxes = document.querySelectorAll('input[name$=".SelectedToppingIds"]');
+
+        sizeSelects.forEach(function (select) {
+            select.addEventListener('change', function () {
+                updatePriceAndTotal(this);
+            });
+        });
+
+        quantityInputs.forEach(function (input) {
+            input.addEventListener('change', function () {
+                updatePriceAndTotal(this);
+            });
+        });
+
+        toppingCheckboxes.forEach(function (checkbox) {
+            checkbox.addEventListener('change', function () {
+                updatePriceAndTotal(this);
+            });
+        });
+
+
+    @for (int i = 0; i < Model.Menus.Count; i++)
+    {
+        <text>
+                updatePriceAndTotal(document.getElementById("Quantity_@Model.Menus[i].Id"));
+        </text>
+    }
+        });
 </script>
 
+<style>
+    .card-img-container {
+        overflow: hidden;
+        height: 200px;
+    }
 
+    .card-img-top {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .card-footer {
+        padding: 1rem;
+    }
+</style>
 
 @await Html.PartialAsync("_Menu")
+
+

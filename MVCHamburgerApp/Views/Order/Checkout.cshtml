@@ -1,0 +1,48 @@
+﻿@using MVCHamburgerApp.Data.Entities
+@model CheckoutViewModel
+@{
+    var extraToppings = TempData.Get<List<ExtraTopping>>("ExtraToppings");
+}
+
+<h2>Sipariş Özeti</h2>
+
+<div>
+    <h3>Müşteri Bilgileri</h3>
+    <p>Adı: @Model.CustomerName</p>
+</div>
+<div>
+    <h3>Sipariş Detayları</h3>
+    <ul>
+        @if (Model != null && Model.Order != null)
+        {
+            <ul>
+                @foreach (var item in Model.Order.OrderItems.Where(oi => oi.Quantity > 0))
+                {
+                    <li>
+                        @item.MenuName (x@item.Quantity) - @item.ItemPrice TL
+                        @if (item.SelectedToppingIds != null && item.SelectedToppingIds.Any())
+                        {
+                            <ul>
+                                @foreach (var toppingId in item.SelectedToppingIds)
+                                {
+                                    var topping = extraToppings.FirstOrDefault(t => t.Id == toppingId);
+                                    if (topping != null)
+                                    {
+                                        <li>+ @topping.Name (@topping.Price TL)</li>
+                                    }
+                                }
+                            </ul>
+                        }
+                    </li>
+                }
+            </ul>
+            <p>Toplam Tutar: @Model.Order.TotalPrice TL</p>
+        }
+        else
+        {
+            <p>Sipariş bilgisi bulunamadı.</p>
+        }
+    </ul>
+</div>
+
+<button type="submit">Siparişi Onayla</button>
