@@ -1,7 +1,32 @@
+using FluentValidation;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using MVCHamburgerApp.Data;
+using MVCHamburgerApp.Data.Entities;
+using System.Reflection;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+
+builder.Services.AddDbContext<HamburgerDbContext>(opt =>
+{
+    opt.UseSqlServer(builder.Configuration.GetConnectionString("HamburgerDbStr"));
+});
+
+builder.Services.AddIdentity<AppUser, IdentityRole<int>>()
+                .AddEntityFrameworkStores<HamburgerDbContext>()
+                .AddDefaultTokenProviders();
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Admin/Account/Login";    // account/login
+    options.LogoutPath = "/Admin/Account/Logout";  // account/logout
+});
+
+builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
 var app = builder.Build();
 
@@ -18,10 +43,19 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.MapControllerRoute(
+       name: "areas",
+      pattern: "{area:exists}/{controller=Account}/{action=Login}/{id?}");
+
+
+
+
 
 app.Run();

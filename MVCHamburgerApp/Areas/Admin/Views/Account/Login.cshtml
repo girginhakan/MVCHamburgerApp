@@ -1,0 +1,40 @@
+﻿@{
+    Layout = "_LayoutLoginPage";
+}
+@model LoginViewModel
+
+
+<div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+     data-sidebar-position="fixed" data-header-position="fixed">
+    <div class="position-relative overflow-hidden radial-gradient min-vh-100 d-flex align-items-center justify-content-center">
+        <div class="d-flex align-items-center justify-content-center w-100">
+            <div class="row justify-content-center w-100">
+                <div class="col-md-8 col-lg-6 col-xxl-3">
+                    <div class="card mb-0">
+                        <div class="card-body">
+
+                            <h3 class="d-flex align-items-center justify-content-center">Admin Giriş ekranına hoşgeldiniz</h3>
+                            <br />
+                           
+                            <form asp-area="Admin" asp-controller="Account" asp-action="Login" method="post">
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Kullanıcı Adınız</label>
+                                    <input asp-for="Email" type="email" class="form-control" id="email">
+                                   
+                                </div>
+                                <div class="mb-4">
+                                    <label for="password" class="form-label">Şifreniz</label>
+                                    <input asp-for="Password" type="password" class="form-control" id="password">
+                                   
+                                </div>
+
+                                <button type="submit" class="btn btn-primary w-100 py-8 fs-4 mb-4 rounded-2">Giriş Yap</button>
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
