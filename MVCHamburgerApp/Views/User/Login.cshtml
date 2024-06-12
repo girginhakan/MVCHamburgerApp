@@ -1,12 +1,10 @@
-﻿@model UserViewModel
-
-
+﻿@model LoginViewModel
 
 <div class="container-xxl py-5 bg-dark hero-header mb-5">
     <div class="container my-5 py-5">
         <div class="row align-items-center g-5">
             <div class="col-lg-6 text-center text-lg-start">
-                <h1 class="display-3 text-white animated slideInLeft">Üye Kayıt Ekranı</h1>
+                <h1 class="display-3 text-white animated slideInLeft">Üye Giriş Ekranı</h1>
             </div>
             <div class="col-lg-6 text-center text-lg-end overflow-hidden">
                 <img class="img-fluid" src="img/hero.png" alt="">
@@ -16,32 +14,29 @@
 </div>
 
 
-
-<!-- contact section start -->
 <div class="contact_section layout_padding">
     <div class="container-xxl">
         <div class="row">
             <div class="col-sm-12">
                 <br />
-               
+
             </div>
         </div>
     </div>
-    <form asp-controller="User" asp-action="Register" method="post">
+    <form asp-controller="User" asp-action="Login" method="post">
         <div class="container-fluid">
             <div class="contact_section_2">
                 <div class="row">
                     <div class="col-md-12">
 
                         <div class="mail_section_1">
-                            <input asp-for="Name" type="text" class="form-control" placeholder="Adınız" ><br />
-                            <input asp-for="Surname" type="text" class="form-control" placeholder="Soyadınız"><br />
+                          
                             <input asp-for="Email" type="text" class="form-control" placeholder="E-posta"><br />
                             <input asp-for="Password" type="text" class="form-control" placeholder="Şifreniz"><br />
-                            <input asp-for="ConfirmPassword" type="text" class="form-control" placeholder="Şifre tekrarı">
+                            
                             <br />
                             <div class="send_bt">
-                                <button type="submit" class="btn btn-outline-success">Ekle</button>
+                                <button type="submit" class="btn btn-outline-success">Giriş Yap</button>
                                 <a asp-controller="Home" asp-action="Index" type="submit" class="btn btn-outline-warning">Geri</a>
                             </div>
                         </div>

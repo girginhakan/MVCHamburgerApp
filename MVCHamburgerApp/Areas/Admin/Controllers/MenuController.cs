@@ -81,7 +81,7 @@ namespace MVCHamburgerApp.Areas.Admin.Controllers
                 using (var akisOrtami = new FileStream(konum, FileMode.Create))
                 {
                     // Resmi kaydet
-                     menuViewModel.Picture.CopyToAsync(akisOrtami);
+                     menuViewModel.Picture.CopyTo(akisOrtami);
                 }
             }
 
@@ -157,9 +157,13 @@ namespace MVCHamburgerApp.Areas.Admin.Controllers
         public void DeletePicture(Menu menu)
         {
             var resmiKullananBaskaUrunVarMi = _context.Menus.Any(u => u.PictureName == menu.PictureName && u.Id != menu.Id);
-
+            if (!resmiKullananBaskaUrunVarMi)
+            {
                 string deletedPicture = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", menu.PictureName);
                 System.IO.File.Delete(deletedPicture);
+            }
+
+                
 
         }
 
@@ -184,12 +188,12 @@ namespace MVCHamburgerApp.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Menu menu)
         {
-            //var menu = await _context.Menus.FindAsync(id);
-            if (menu.PictureName is not null)
+            var menu2 = await _context.Menus.FindAsync(menu.Id);
+            if (menu2.PictureName is not null)
             {
-                DeletePicture(menu);
+                DeletePicture(menu2);
             }
-                _context.Menus.Remove(menu);
+                _context.Menus.Remove(menu2);
                 await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
