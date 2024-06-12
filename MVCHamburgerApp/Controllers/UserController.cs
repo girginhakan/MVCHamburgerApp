@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
-using MVCHamburgerApp.Areas.Admin.Models;
 using MVCHamburgerApp.Data.Entities;
 using MVCHamburgerApp.Models;
+
 
 namespace MVCHamburgerApp.Controllers
 {
@@ -51,14 +51,18 @@ namespace MVCHamburgerApp.Controllers
 
             var users = _userManager.Users.ToList();
 
-            foreach (var item in users)
+            if (_userManager.Users.Any(u=>u.Email==model.Email))
             {
-                if (model.Email == item.Email)
-                {
-                    ViewBag.ErrorMessage = $"{model.Email} adresi zaten kayıtlıdır";
-                    return View(model);
-                }
+                ViewBag.ErrorMessage = $"{model.Email} adresi zaten kayıtlıdır";
+                return View(model);
             }
+            //foreach (var item in users)
+            //{
+            //    if (model.Email == item.Email)
+            //    {
+                   
+            //    }
+            //}
 
             var hasher = new PasswordHasher<AppUser>();
 
@@ -83,7 +87,7 @@ namespace MVCHamburgerApp.Controllers
 
                 TempData["Message"] = "Kayıt başarılı! Giriş yapabilirsiniz.";
 
-                return RedirectToAction(nameof(Login));
+                return RedirectToAction("Index","Home");
             }
             else
             {
@@ -98,7 +102,7 @@ namespace MVCHamburgerApp.Controllers
         [HttpGet]
         public IActionResult Login()
         {
-            LoginViewModel model = new LoginViewModel();
+            Models.LoginViewModel model = new Models.LoginViewModel();
             return View(model);
         }
 
