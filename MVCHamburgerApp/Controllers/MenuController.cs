@@ -40,25 +40,64 @@ namespace MVCHamburgerApp.Controllers
         {
             var appUser = await _userManager.GetUserAsync(User);
 
-            if (orderViewModel.OrderItems == null || !orderViewModel.OrderItems.Any(item => item.Quantity > 0))
+            if (!orderViewModel.OrderItems.Any(item => item.Quantity > 0))
             {
                 ModelState.AddModelError("", "Lütfen en az bir menü öğesi seçin ve miktarını belirtin.");
-                return View("Index", new MenuViewModel { Menus = _context.Menus.ToList(), ExtraToppings = _context.ExtraToppings.ToList() }); //
+                var model = new MenuViewModel
+                {
+                    Menus = await _context.Menus.ToListAsync(),
+                    ExtraToppings = await _context.ExtraToppings.ToListAsync()
+                };
+                return View("Index", model); 
             }
 
-            var totalPrice = orderViewModel.OrderItems.Sum(item => item.ItemPrice);
+            CheckoutViewModel checkoutViewModel = null; 
+
+
+            foreach (var orderItem in orderViewModel.OrderItems.Where(item => item.Quantity > 0))
+            {
+                var menu = _context.Menus.Find(orderItem.MenuId); 
+
+                if (menu != null)
+                {
+                    decimal sizePrice = 0;
+                    switch (orderItem.Size)
+                    {
+                        case "Orta":
+                            sizePrice = 25;
+                            break;
+                        case "Büyük":
+                            sizePrice = 50;
+                            break;
+                    }
+
+                    decimal toppingPrice = 0;
+                    if (orderItem.SelectedToppingIds != null)
+                    {
+                        toppingPrice = _context.ExtraToppings
+                            .Where(t => orderItem.SelectedToppingIds.Contains(t.Id))
+                            .Sum(t => t.Price);
+                    }
+
+                    orderItem.ItemPrice = (menu.BasePrice + sizePrice + toppingPrice) * orderItem.Quantity;
+                }
+            }
+
+            orderViewModel.TotalPrice = orderViewModel.OrderItems
+                .Where(item => item.Quantity > 0)
+                .Sum(item => item.ItemPrice);
 
             var order = new Order
             {
                 AppUserId = appUser.Id,
                 Date = DateTime.Now,
-                TotalPrice = totalPrice
+                TotalPrice = orderViewModel.TotalPrice 
             };
 
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
 
-            foreach (var orderItem in orderViewModel.OrderItems.Where(item => item.Quantity > 0))  
+            foreach (var orderItem in orderViewModel.OrderItems.Where(item => item.Quantity > 0))
             {
                 if (orderItem.SelectedToppingIds != null && orderItem.SelectedToppingIds.Any())
                 {
@@ -81,24 +120,25 @@ namespace MVCHamburgerApp.Controllers
                         OrderId = order.Id,
                         MenuId = orderItem.MenuId,
                         Quantity = orderItem.Quantity,
-                        ExtraToppingId = null 
+                        ExtraToppingId = null
                     };
                     _context.OrderDetails.Add(orderDetail);
                 }
             }
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(); 
 
-            var checkoutViewModel = new CheckoutViewModel
+
+            checkoutViewModel = new CheckoutViewModel
             {
                 Order = orderViewModel,
                 CustomerName = appUser.Name
             };
-
             TempData.Put("CheckoutViewModel", checkoutViewModel);
             TempData.Put("ExtraToppings", _context.ExtraToppings.ToList());
 
-            return RedirectToAction("Checkout", "Order");
+            return RedirectToAction("Checkout", "Order"); 
         }
+
 
     }
 }

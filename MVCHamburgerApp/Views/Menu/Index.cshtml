@@ -32,9 +32,10 @@
                             <input type="hidden" name="OrderItems[@i].MenuId" value="@menu.Id" />
                             <input type="hidden" name="OrderItems[@i].MenuName" value="@menu.Name" />
                             <input type="hidden" id="BasePrice_@menu.Id" value="@menu.BasePrice" />
+                            <input type="hidden" name="OrderItems[@i].ItemPrice" value="@menu.BasePrice" />
 
                             <p class="card-text">
-                                Fiyat: <span id="PriceDisplay_@menu.Id">@menu.BasePrice</span> TL
+                                Fiyat: <span>@menu.BasePrice</span> TL
                             </p>
                             <label for="Size_@menu.Id">Boyut:</label>
                             <select id="Size_@menu.Id" name="OrderItems[@i].Size" class="form-control" onchange="updatePriceAndTotal(this)">
@@ -44,7 +45,6 @@
                             </select>
                             <label for="Quantity_@menu.Id">Adet:</label>
                             <input type="number" id="Quantity_@menu.Id" name="OrderItems[@i].Quantity" class="form-control" min="0" value="0" onchange="updatePriceAndTotal(this)">
-
 
                             <div>
                                 <label>Ekstra Malzemeler:</label>
@@ -69,7 +69,7 @@
 
 
 
-<script>
+@* <script>
     function updatePriceAndTotal(element) {
         var index = element.name.match(/\[(\d+)\]/)[1];
 
@@ -82,22 +82,27 @@
         var quantity = parseInt(quantityInput.value) || 0;
         var basePrice = parseInt(basePriceInput.value) || 0;
 
+        // Check if quantity is greater than 0 before calculating topping price
         var toppingPrice = 0;
-        var toppingCheckboxes = document.querySelectorAll(`input[name="OrderItems[${index}].SelectedToppingIds"]:checked`);
-        toppingCheckboxes.forEach(function (checkbox) {
-            toppingPrice += parseInt(checkbox.getAttribute("data-price"));
-        });
+        if (quantity > 0) {
+            var toppingCheckboxes = document.querySelectorAll(`input[name="OrderItems[${index}].SelectedToppingIds"]:checked`);
+            toppingCheckboxes.forEach(function (checkbox) {
+                toppingPrice += parseInt(checkbox.getAttribute("data-price"));
+            });
+        }
 
         var totalPrice = (basePrice + sizePrice + toppingPrice) * quantity;
         priceDisplay.innerText = totalPrice;
 
+        // Update the hidden input with the calculated item price ONLY IF quantity is > 0
         var itemPriceInput = document.querySelector(`input[name="OrderItems[${index}].ItemPrice"]`);
         if (itemPriceInput) {
-            itemPriceInput.value = totalPrice;
+            itemPriceInput.value = quantity > 0 ? totalPrice : 0;
         }
 
         calculateGrandTotal();
     }
+
 
     function calculateGrandTotal() {
         var total = 0;
@@ -112,6 +117,24 @@
         var sizeSelects = document.querySelectorAll('select[id^="Size_"]');
         var quantityInputs = document.querySelectorAll('input[id^="Quantity_"]');
         var toppingCheckboxes = document.querySelectorAll('input[name$=".SelectedToppingIds"]');
+
+        document.getElementById('orderForm').addEventListener('submit', function (event) {
+            var hasItems = false;
+            var quantityInputs = document.querySelectorAll('input[name$=".Quantity"]');
+            quantityInputs.forEach(function (input) {
+                if (parseInt(input.value) > 0) {
+                    hasItems = true;
+                }
+            });
+            if (!hasItems) {
+                event.preventDefault(); // Prevent form submission
+                alert("Lütfen en az bir menü öğesinin adedini 1'den büyük yapın.");
+            }
+
+        var itemPriceInputs = document.querySelectorAll('input[name$=".ItemPrice"]');
+        itemPriceInputs.forEach(function (input) {
+            input.addEventListener('change', calculateGrandTotal);
+
 
         sizeSelects.forEach(function (select) {
             select.addEventListener('change', function () {
@@ -139,7 +162,7 @@
         </text>
     }
         });
-</script>
+</script> *@
 
 <style>
     .card-img-container {
