@@ -30,7 +30,7 @@
                 @foreach (var item in Model.Order.OrderItems.Where(oi => oi.Quantity > 0))
                 {
                     <li>
-                        @item.MenuName (x@item.Quantity) - @item.ItemPrice TL
+                        @item.MenuName (@item.Quantity) adet - @item.ItemPrice TL
                         @if (item.SelectedToppingIds != null && item.SelectedToppingIds.Any())
                         {
                             <ul>
@@ -55,5 +55,4 @@
         }
     </ul>
 </div>
-
-<button type="submit">Siparişi Onayla</button>
+<a asp-controller="Order" asp-action="CompletedOrder" class="btn btn-outline-success" type="submit">Siparişi Onayla</a>
