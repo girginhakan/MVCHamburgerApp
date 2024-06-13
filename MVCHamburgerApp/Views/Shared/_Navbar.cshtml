@@ -1,41 +1,43 @@
 ﻿
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4 px-lg-5 py-3 py-lg-0">
-        <a href="" class="navbar-brand p-0">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4 px-lg-5 py-3 py-lg-0">
+    <a href="" class="navbar-brand p-0">
         <h1 class="text-primary m-0"> <i class="fa fa-hamburger fa-x text-primary"></i> Hamburgo</h1>
-            <!-- <img src="client/img/logo.png" alt="Logo"> -->
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-            <span class="fa fa-bars"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarCollapse">
-            <div class="navbar-nav ms-auto py-0 pe-4">
+        <!-- <img src="client/img/logo.png" alt="Logo"> -->
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+        <span class="fa fa-bars"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+        <div class="navbar-nav ms-auto py-0 pe-4">
             <a asp-area="" asp-controller="Home" asp-action="Index" class="nav-item nav-link active">Ev</a>
-                <a asp-area="" asp-controller="Home" asp-action="About" class="nav-item nav-link">Hakkımızda</a>
+            <a asp-area="" asp-controller="Home" asp-action="About" class="nav-item nav-link">Hakkımızda</a>
             <a asp-area="" asp-controller="Home" asp-action="Service" class="nav-item nav-link">Hizmetlerimiz</a>
             <a asp-area="" asp-controller="Menu" asp-action="Index" class="nav-item nav-link">Menüler</a>
-                
-            <a asp-area="" asp-controller="User" asp-action="Register" class="nav-item nav-link">Kayıt Ol</a>
-            </div>
+
+        </div>
         @if (User.Identity.IsAuthenticated)
         {
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Hoşgeldin  " @User.Identity.Name "   <i class="bi bi-chevron-double-down"></i>
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" asp-controller="Orders" asp-action="Index">Siparişlerim</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" asp-controller="User" asp-action="Logout">Çıkış Yap</a>
-                </div>
-            </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Hoşgeldin  " @User.Identity.Name "
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" asp-controller="Order" asp-action="Checkout">Siparişlerim</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" asp-controller="User" asp-action="Logout">Çıkış Yap</a>
+                    </div>
+                </li>
         }
         else
         {
 
-                <a asp-area="" asp-controller="User" asp-action="Login" class="btn btn-outline-primary py-2 px-4">Giriş yap</a>
+            <a asp-area="" asp-controller="User" asp-action="Register" class="nav-item nav-link">Kayıt Ol</a>
+            <a asp-area="" asp-controller="User" asp-action="Login" class="btn btn-outline-primary py-2 px-4">Giriş yap</a>
+
         }
 
 
-        </div>
-    </nav>
+    </div>
+</nav>
 

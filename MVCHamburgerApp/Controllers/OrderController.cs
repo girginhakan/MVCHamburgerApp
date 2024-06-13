@@ -15,5 +15,9 @@ namespace MVCHamburgerApp.Controllers
 
             return View(checkoutViewModel);
         }
+        public IActionResult CompletedOrder()
+        {
+            return View();
+        }
     }
 }
