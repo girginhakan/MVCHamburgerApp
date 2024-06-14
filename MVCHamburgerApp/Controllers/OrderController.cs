@@ -5,13 +5,10 @@ namespace MVCHamburgerApp.Controllers
 {
     public class OrderController : Controller
     {
-        //public IActionResult Index()
-        //{
-        //    return View();
-        //}
+       
         public IActionResult Checkout()
         {
-            var checkoutViewModel = TempData.Get<CheckoutViewModel>("CheckoutViewModel"); // In Checkout
+            var checkoutViewModel = TempData.Get<CheckoutViewModel>("CheckoutViewModel"); 
 
             return View(checkoutViewModel);
         }

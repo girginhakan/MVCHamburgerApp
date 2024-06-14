@@ -1,0 +1,54 @@
+﻿@using MVCHamburgerApp.Data.Enums
+@model EditOrderViewModel
+
+<div class="container-xxl py-5 bg-dark hero-header mb-5">
+    <div class="container my-5 py-5">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6 text-center text-lg-start">
+                <h1 class="display-3 text-white animated slideInLeft">Menüler</h1>
+            </div>
+            <div class="col-lg-6 text-center text-lg-end overflow-hidden">
+                <img class="img-fluid" src="img/hero.png" alt="">
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container">
+    <h1>Edit Order</h1>
+    <form asp-action="EditOrder" method="post">
+        <input hidden asp-for="TotalPrice"/>
+        <input hidden asp-for="OrderId" />
+
+        @for (int i = 0; i < Model.OrderItems.Count; i++)
+        {
+            OrderItemViewModel item = Model.OrderItems[i];
+            <div class="form-group">
+                <label>@item.MenuName</label>
+                <input asp-for=@item.MenuId type="hidden" name="OrderItems[@i].MenuId" value="@item.MenuId" />
+                <input asp-for=@item.MenuName type="hidden" name="OrderItems[@i].MenuName" value="@item.MenuName" />
+
+                <select asp-for="@item.Size" asp-items="@Html.GetEnumSelectList<MenuSize>()" class="input">
+                </select>
+
+                @* <select name="OrderItems[@i].Size" class="form-control">
+                    <option value="Küçük" @(item.Size == "Küçük" ? "selected" : "")>Küçük</option>
+                    <option value="Orta" @(item.Size == "Orta" ? "selected" : "")>Orta</option>
+                    <option value="Büyük" @(item.Size == "Büyük" ? "selected" : "")>Büyük</option>
+                </select> *@
+
+                <input type="number" name="OrderItems[@i].Quantity" class="form-control" value="@item.Quantity" />
+
+                @foreach (var topping in ViewBag.ExtraToppings)
+                {
+                    <div class="form-check">
+                        <input type="checkbox" name="OrderItems[@i].SelectedToppingIds" value="@topping.Id" class="form-check-input" @(item.SelectedToppingIds.Contains(topping.Id) ? "checked" : "") />
+                        <label class="form-check-label">@topping.Name (@topping.Price TL)</label>
+                    </div>
+                }
+            </div>
+        }
+        <button type="submit" class="btn btn-primary">Update Order</button>
+    </form>
+</div>
