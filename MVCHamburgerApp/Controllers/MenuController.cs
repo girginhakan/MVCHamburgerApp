@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MVCHamburgerApp.Data;
 using MVCHamburgerApp.Data.Entities;
+using MVCHamburgerApp.Data.Enums;
 using MVCHamburgerApp.Models;
 using System.Threading.Tasks;
 using System.Web.Mvc;
@@ -63,10 +64,10 @@ namespace MVCHamburgerApp.Controllers
                     decimal sizePrice = 0;
                     switch (orderItem.Size)
                     {
-                        case "Orta":
+                        case MenuSize.Orta:
                             sizePrice = 25;
                             break;
-                        case "Büyük":
+                        case MenuSize.Büyük:
                             sizePrice = 50;
                             break;
                     }
@@ -98,7 +99,7 @@ namespace MVCHamburgerApp.Controllers
             await _context.SaveChangesAsync();
 
             foreach (var orderItem in orderViewModel.OrderItems.Where(item => item.Quantity > 0))
-            {
+            {//1 kere new orderDetail
                 if (orderItem.SelectedToppingIds != null && orderItem.SelectedToppingIds.Any())
                 {
                     foreach (var toppingId in orderItem.SelectedToppingIds)
@@ -108,6 +109,7 @@ namespace MVCHamburgerApp.Controllers
                             OrderId = order.Id,
                             MenuId = orderItem.MenuId,
                             Quantity = orderItem.Quantity,
+                            MenuSize = orderItem.Size, 
                             ExtraToppingId = toppingId
                         };
                         _context.OrderDetails.Add(orderDetail);
@@ -133,12 +135,92 @@ namespace MVCHamburgerApp.Controllers
                 Order = orderViewModel,
                 CustomerName = appUser.Name
             };
+
             TempData.Put("CheckoutViewModel", checkoutViewModel);
             TempData.Put("ExtraToppings", _context.ExtraToppings.ToList());
 
             return RedirectToAction("Checkout", "Order"); 
         }
+        public async Task<IActionResult> EditOrder(int id)
+        {
+            var order = await _context.Orders
+                .Include(o => o.OrderDetails)
+                .ThenInclude(od => od.Menu)
+                .Include(o => o.OrderDetails)
+                .ThenInclude(od => od.ExtraTopping)
+                .FirstOrDefaultAsync(o => o.Id == id);
 
+            if (order == null)
+            {
+                return NotFound();
+            }
 
+            var model = new EditOrderViewModel
+            {
+                OrderId = order.Id,
+                OrderItems = order.OrderDetails.Select(od => new OrderItemViewModel
+                {
+                    MenuId = od.MenuId,
+                    MenuName = od.Menu.Name,
+                    Quantity = od.Quantity,
+                    Size=od.MenuSize,
+                    SelectedToppingIds = od.ExtraTopping != null ? new List<int> { od.ExtraTopping.Id } : new List<int>(),
+                    ItemPrice = od.Menu.BasePrice + (od.ExtraTopping?.Price ?? 0)
+                }).ToList(),
+                TotalPrice = order.TotalPrice
+            };
+
+            ViewBag.Menus = await _context.Menus.ToListAsync();
+            ViewBag.ExtraToppings = await _context.ExtraToppings.ToListAsync();
+
+            return View(model);
+        }
+
+        [Microsoft.AspNetCore.Mvc.HttpPost]
+        public async Task<IActionResult> EditOrder(EditOrderViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Menus = await _context.Menus.ToListAsync();
+                ViewBag.ExtraToppings = await _context.ExtraToppings.ToListAsync();
+                return View(model);
+            }
+
+            var order = await _context.Orders
+                .Include(o => o.OrderDetails)
+                .FirstOrDefaultAsync(o => o.Id == model.OrderId);
+
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            _context.OrderDetails.RemoveRange(order.OrderDetails);
+            _context.SaveChanges();
+
+            foreach (var item in model.OrderItems)
+            {
+                for (int i = 0; i < item.Quantity; i++)
+                {
+                    order.OrderDetails.Add(new OrderDetail
+                    {
+                        OrderId = order.Id,
+                        MenuId = item.MenuId,
+                        Quantity = item.Quantity,
+                        ExtraToppingId = item.SelectedToppingIds.FirstOrDefault()
+                    });
+                }
+            }
+
+            order.TotalPrice = model.OrderItems.Sum(item => item.ItemPrice);
+
+            _context.Orders.Update(order);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Checkout", "Order", new { orderId = order.Id });
+        }
     }
+
+
 }
+
