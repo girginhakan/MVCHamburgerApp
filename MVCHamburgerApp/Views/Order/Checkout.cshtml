@@ -19,8 +19,8 @@
 
 <div>
     <h3>Müşteri Bilgileri</h3>
-    <p>Adı: @Model.CustomerName</p>
-</div>
+@*     <p>Adı: @Model.CustomerName</p>
+ *@</div>
 <div>
     <h3>Sipariş Detayları</h3>
     <ul>
@@ -51,8 +51,12 @@
         }
         else
         {
-            <p>Sipariş bilgisi bulunamadı.</p>
+            <p>Siparişiniz başarıyla güncellenmiştir</p>
         }
     </ul>
 </div>
+
 <a asp-controller="Order" asp-action="CompletedOrder" class="btn btn-outline-success" type="submit">Siparişi Onayla</a>
+<a asp-controller="Menu" asp-action="EditOrder" asp-route-id="@TempData["LastOrderId"]" class="btn btn-outline-primary">Siparişi Düzenle</a> 
+
+@* DELETE <a asp-controller="Menu" asp-action="DeleteOrder" asp-route-id="@TempData["LastOrderId"]" class="btn btn-outline-danger" onclick="return confirm('Bu siparişi silmek istediğinizden emin misiniz?');">Siparişi Sil</a> *@

@@ -139,7 +139,10 @@ namespace MVCHamburgerApp.Controllers
             TempData.Put("CheckoutViewModel", checkoutViewModel);
             TempData.Put("ExtraToppings", _context.ExtraToppings.ToList());
 
-            return RedirectToAction("Checkout", "Order"); 
+            TempData["LastOrderId"] = order.Id;
+
+            return RedirectToAction("Checkout", "Order");
+
         }
         public async Task<IActionResult> EditOrder(int id)
         {
@@ -219,6 +222,27 @@ namespace MVCHamburgerApp.Controllers
 
             return RedirectToAction("Checkout", "Order", new { orderId = order.Id });
         }
+
+        [Microsoft.AspNetCore.Mvc.HttpPost]
+        [System.Web.Mvc.ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteOrder(int id)
+        {
+            var order = await _context.Orders
+                .Include(o => o.OrderDetails)
+                .FirstOrDefaultAsync(o => o.Id == id);
+
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            _context.OrderDetails.RemoveRange(order.OrderDetails);
+            _context.Orders.Remove(order);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index");
+        }
+
     }
 
 
